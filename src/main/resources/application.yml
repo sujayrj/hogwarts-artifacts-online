@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: hogwarts-artifacts-online
+  datasource:
+    url : jdbc:h2:mem:hogwarts
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    show-sql: true
+server:
+  port: 8081
