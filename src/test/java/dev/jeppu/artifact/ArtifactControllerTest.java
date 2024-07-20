@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.jeppu.artifact.dto.ArtifactDTO;
 import dev.jeppu.artifact.util.IdWorker;
 import dev.jeppu.system.StatusCode;
+import java.util.ArrayList;
+import java.util.List;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,9 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @AutoConfigureMockMvc
 @WebMvcTest
@@ -89,24 +88,30 @@ class ArtifactControllerTest {
 
     @Test
     void testArtifactDeleteByIdWhenArtifactDoesNotExists() throws Exception {
-        //Given
-        BDDMockito.willThrow(new ArtifactNotFoundException("1250808601744904196")).given(artifactService).deleteArtifactById("1250808601744904196");
+        // Given
+        BDDMockito.willThrow(new ArtifactNotFoundException("1250808601744904196"))
+                .given(artifactService)
+                .deleteArtifactById("1250808601744904196");
 
-        //then
-        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/artifacts/1250808601744904196").accept(MediaType.APPLICATION_JSON))
+        // then
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.delete("/api/v1/artifacts/1250808601744904196")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(StatusCode.NOT_FOUND))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(Boolean.FALSE))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Could not find Artifact with Id 1250808601744904196"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message")
+                        .value("Could not find Artifact with Id 1250808601744904196"));
     }
 
     @Test
     void testArtifactDeleteByIdWhenArtifactExists() throws Exception {
-        //Given
+        // Given
         BDDMockito.willDoNothing().given(artifactService).deleteArtifactById("1250808601744904196");
 
-        //then
-        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/artifacts/1250808601744904196")
-                .accept(MediaType.APPLICATION_JSON))
+        // then
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.delete("/api/v1/artifacts/1250808601744904196")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Artifact Deleted"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(Boolean.TRUE));
@@ -133,9 +138,9 @@ class ArtifactControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(StatusCode.NOT_FOUND))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(Boolean.FALSE))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Could not find Artifact with Id 1250808601744904191"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message")
+                        .value("Could not find Artifact with Id 1250808601744904191"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
-
     }
 
     @Test

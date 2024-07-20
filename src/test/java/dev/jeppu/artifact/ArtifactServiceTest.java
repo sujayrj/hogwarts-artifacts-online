@@ -3,6 +3,10 @@ package dev.jeppu.artifact;
 import dev.jeppu.artifact.dto.ArtifactDTO;
 import dev.jeppu.artifact.util.IdWorker;
 import dev.jeppu.wizard.Wizard;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,11 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class ArtifactServiceTest {
@@ -54,23 +53,26 @@ class ArtifactServiceTest {
 
     @Test
     void testDeleteArtifactByIdWhenArtifactNotFound() {
-        //Given
-        BDDMockito.given(artifactRepository.findById("1250808601744904191")).willThrow(new ArtifactNotFoundException("1250808601744904191"));
-        //BDDMockito.willDoNothing().given(artifactRepository).deleteById("1250808601744904191");
+        // Given
+        BDDMockito.given(artifactRepository.findById("1250808601744904191"))
+                .willThrow(new ArtifactNotFoundException("1250808601744904191"));
+        // BDDMockito.willDoNothing().given(artifactRepository).deleteById("1250808601744904191");
 
-        //then
-        //1st option - using Assertions from Junit
-        //org.junit.jupiter.api.Assertions.assertThrows(ArtifactNotFoundException.class, () -> artifactService.deleteArtifactById("1250808601744904191"));
+        // then
+        // 1st option - using Assertions from Junit
+        // org.junit.jupiter.api.Assertions.assertThrows(ArtifactNotFoundException.class, () ->
+        // artifactService.deleteArtifactById("1250808601744904191"));
 
-        //2nd option - using Assertions from AssertJ, you can verify the message as well in this case
-        Throwable catchThrowable = Assertions.catchThrowable(() -> artifactService.deleteArtifactById("1250808601744904191"));
+        // 2nd option - using Assertions from AssertJ, you can verify the message as well in this case
+        Throwable catchThrowable =
+                Assertions.catchThrowable(() -> artifactService.deleteArtifactById("1250808601744904191"));
         Assertions.assertThat(catchThrowable).isInstanceOf(ArtifactNotFoundException.class);
         Assertions.assertThat(catchThrowable).hasMessage("Could not find Artifact with Id 1250808601744904191");
     }
 
     @Test
     void testDeleteArtifactByIdWhenArtifactExists() {
-        //Given
+        // Given
         Artifact artifact = new Artifact();
         artifact.setId("1250808601744904191");
         artifact.setName("Deluminator");
@@ -81,10 +83,10 @@ class ArtifactServiceTest {
         BDDMockito.given(artifactRepository.findById(BDDMockito.anyString())).willReturn(Optional.of(artifact));
         BDDMockito.willDoNothing().given(artifactRepository).deleteById(artifact.getId());
 
-        //When
+        // When
         artifactService.deleteArtifactById(artifact.getId());
 
-        //Then
+        // Then
         BDDMockito.verify(artifactRepository, BDDMockito.times(1)).findById("1250808601744904191");
         BDDMockito.verify(artifactRepository, BDDMockito.times(1)).deleteById("1250808601744904191");
     }

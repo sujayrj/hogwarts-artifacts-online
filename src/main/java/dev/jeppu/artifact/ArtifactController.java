@@ -53,7 +53,7 @@ public class ArtifactController {
     }
 
     @DeleteMapping("/{artifactId}")
-    public Result deleteArtifact(@PathVariable String artifactId){
+    public Result deleteArtifact(@PathVariable String artifactId) {
         artifactService.deleteArtifactById(artifactId);
         return new Result(Boolean.TRUE, StatusCode.SUCCESS, "Artifact Deleted");
     }
