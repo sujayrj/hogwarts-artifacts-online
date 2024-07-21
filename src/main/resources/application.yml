@@ -10,3 +10,8 @@ spring:
     show-sql: true
 server:
   port: 8081
+
+
+api:
+  endpoint:
+    base_url: /api/v1

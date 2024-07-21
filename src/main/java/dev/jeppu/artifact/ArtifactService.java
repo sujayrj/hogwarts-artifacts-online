@@ -2,6 +2,7 @@ package dev.jeppu.artifact;
 
 import dev.jeppu.artifact.convertor.ArtifactToArtifactDTOConvertor;
 import dev.jeppu.artifact.util.IdWorker;
+import dev.jeppu.system.exception.ObjectNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,9 @@ public class ArtifactService {
     private final IdWorker idWorker;
 
     public Artifact findById(String artifactId) {
-        return artifactRepository.findById(artifactId).orElseThrow(() -> new ArtifactNotFoundException(artifactId));
+        return artifactRepository
+                .findById(artifactId)
+                .orElseThrow(() -> new ObjectNotFoundException("Artifact", artifactId));
     }
 
     public List<Artifact> findAllArtifacts() {
@@ -38,12 +41,13 @@ public class ArtifactService {
                     oldArtifact.setOwner(newArtifact.getOwner());
                     return artifactRepository.save(oldArtifact);
                 })
-                .orElseThrow(() -> new ArtifactNotFoundException(artifactId));
+                .orElseThrow(() -> new ObjectNotFoundException("Artifact", artifactId));
     }
 
     public void deleteArtifactById(String artifactId) {
-        Artifact artifact =
-                artifactRepository.findById(artifactId).orElseThrow(() -> new ArtifactNotFoundException(artifactId));
+        Artifact artifact = artifactRepository
+                .findById(artifactId)
+                .orElseThrow(() -> new ObjectNotFoundException("Artifact", artifactId));
         artifactRepository.deleteById(artifactId);
     }
 }
