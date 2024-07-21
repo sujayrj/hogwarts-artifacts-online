@@ -6,10 +6,9 @@ import dev.jeppu.hogwartsuser.dto.UserDTO;
 import dev.jeppu.system.Result;
 import dev.jeppu.system.StatusCode;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -50,7 +49,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public Result deleteUser(@PathVariable Integer userId){
+    public Result deleteUser(@PathVariable Integer userId) {
         this.userService.deleteUser(userId);
         return new Result(Boolean.TRUE, StatusCode.SUCCESS, "User Deleted", null);
     }

@@ -1,6 +1,9 @@
 package dev.jeppu.hogwartsuser;
 
 import dev.jeppu.system.exception.ObjectNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,10 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -56,11 +55,11 @@ class UserServiceTest {
 
     @Test
     void testFindAllSuccess() {
-        //given
+        // given
         BDDMockito.given(userRepository.findAll()).willReturn(this.hogwartsUsers);
-        //when
+        // when
         List<HogwartsUser> allUsers = userService.findAllUsers();
-        //then
+        // then
         Assertions.assertThat(allUsers.size()).isEqualTo(3);
         Assertions.assertThat(allUsers.get(0).getId()).isEqualTo(1);
         Assertions.assertThat(allUsers.get(1).getId()).isEqualTo(2);
@@ -71,11 +70,11 @@ class UserServiceTest {
 
     @Test
     void testFindByIdSuccess() {
-        //given
+        // given
         BDDMockito.given(userRepository.findById(1)).willReturn(Optional.of(this.hogwartsUsers.get(0)));
-        //when
+        // when
         HogwartsUser user = userService.findUserById(1);
-        //then
+        // then
         Assertions.assertThat(user.getId()).isEqualTo(1);
         Assertions.assertThat(user.getUsername()).isEqualTo("john");
         Assertions.assertThat(user.getEnabled()).isEqualTo(Boolean.TRUE);
@@ -86,9 +85,9 @@ class UserServiceTest {
 
     @Test
     void testFindByIdNotFound() {
-        //given
+        // given
         BDDMockito.given(userRepository.findById(5)).willReturn(Optional.empty());
-        //when
+        // when
         Throwable throwable = Assertions.catchThrowable(() -> userService.findUserById(5));
         Assertions.assertThat(throwable).isInstanceOf(ObjectNotFoundException.class);
         Assertions.assertThat(throwable.getMessage()).isEqualTo("Could not find User with Id : 5");
@@ -96,7 +95,7 @@ class UserServiceTest {
 
     @Test
     void testCreateUser() {
-        //given
+        // given
         HogwartsUser u3 = new HogwartsUser();
         u3.setId(3);
         u3.setUsername("tom");
@@ -104,12 +103,13 @@ class UserServiceTest {
         u3.setEnabled(false);
         u3.setRoles("user");
 
-        BDDMockito.given(userRepository.save(BDDMockito.any(HogwartsUser.class))).willReturn(u3);
+        BDDMockito.given(userRepository.save(BDDMockito.any(HogwartsUser.class)))
+                .willReturn(u3);
 
-        //when
+        // when
         HogwartsUser savedUser = userService.createUser(u3);
 
-        //then
+        // then
         Assertions.assertThat(savedUser).isNotNull();
         Assertions.assertThat(savedUser.getId()).isEqualTo(3);
         Assertions.assertThat(savedUser.getUsername()).isEqualTo("tom");
@@ -121,7 +121,7 @@ class UserServiceTest {
 
     @Test
     void updateUserSuccess() {
-        //given
+        // given
         HogwartsUser u3 = new HogwartsUser();
         u3.setId(3);
         u3.setUsername("tom");
@@ -136,12 +136,13 @@ class UserServiceTest {
         u31.setRoles("admin");
 
         BDDMockito.given(userRepository.findById(3)).willReturn(Optional.of(u3));
-        BDDMockito.given(userRepository.save(BDDMockito.any(HogwartsUser.class))).willReturn(u31);
+        BDDMockito.given(userRepository.save(BDDMockito.any(HogwartsUser.class)))
+                .willReturn(u31);
 
-        //when
+        // when
         HogwartsUser updatedUser = userService.updateUser(3, u31);
 
-        //then
+        // then
         Assertions.assertThat(updatedUser.getUsername()).isEqualTo("tommmy");
         Assertions.assertThat(updatedUser.getEnabled()).isEqualTo(Boolean.TRUE);
         Assertions.assertThat(updatedUser.getRoles()).isEqualTo("admin");
@@ -152,7 +153,7 @@ class UserServiceTest {
 
     @Test
     void testUpdateNotFound() {
-        //given
+        // given
         HogwartsUser user6 = new HogwartsUser();
         user6.setId(6);
         user6.setUsername("tom");
@@ -161,14 +162,14 @@ class UserServiceTest {
         user6.setRoles("user");
 
         BDDMockito.given(userRepository.findById(6)).willReturn(Optional.empty());
-        //when and then
+        // when and then
         Throwable throwable = Assertions.catchThrowable(() -> userService.updateUser(6, user6));
         Assertions.assertThat(throwable).isInstanceOf(ObjectNotFoundException.class);
         Assertions.assertThat(throwable.getMessage()).isEqualTo("Could not find User with Id : 6");
     }
 
     @Test
-    void testDeleteSuccess(){
+    void testDeleteSuccess() {
         HogwartsUser user6 = new HogwartsUser();
         user6.setId(6);
         user6.setUsername("tom");
@@ -177,7 +178,7 @@ class UserServiceTest {
         user6.setRoles("user");
 
         BDDMockito.given(userRepository.findById(8)).willReturn(Optional.of(user6));
-        BDDMockito.willDoNothing().given(userRepository).deleteById(BDDMockito.anyInt());;
+        BDDMockito.willDoNothing().given(userRepository).deleteById(BDDMockito.anyInt());
 
         userService.deleteUser(8);
 
@@ -186,11 +187,10 @@ class UserServiceTest {
     }
 
     @Test
-    void testDeleteWhenUserNotFound(){
+    void testDeleteWhenUserNotFound() {
         BDDMockito.given(userRepository.findById(6)).willReturn(Optional.empty());
         Throwable throwable = Assertions.catchThrowable(() -> userService.deleteUser(6));
         Assertions.assertThat(throwable).isInstanceOf(ObjectNotFoundException.class);
         Assertions.assertThat(throwable.getMessage()).isEqualTo("Could not find User with Id : 6");
     }
-
 }
