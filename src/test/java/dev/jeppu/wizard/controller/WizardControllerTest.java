@@ -2,6 +2,7 @@ package dev.jeppu.wizard.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.jeppu.artifact.Artifact;
+import dev.jeppu.artifact.dto.ArtifactDTO;
 import dev.jeppu.system.StatusCode;
 import dev.jeppu.system.exception.ObjectNotFoundException;
 import dev.jeppu.wizard.Wizard;
@@ -112,7 +113,8 @@ class WizardControllerTest {
         BDDMockito.willDoNothing().given(wizardService).deleteWizard(BDDMockito.anyInt());
         // when
         this.mockMvc
-                .perform(MockMvcRequestBuilders.delete(this.baseUrl+"/wizards/3").accept(MediaType.APPLICATION_JSON))
+                .perform(MockMvcRequestBuilders.delete(this.baseUrl + "/wizards/3")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(Boolean.TRUE))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Wizard Deleted"));
@@ -132,7 +134,7 @@ class WizardControllerTest {
 
         // when
         this.mockMvc
-                .perform(MockMvcRequestBuilders.post(this.baseUrl+"/wizards")
+                .perform(MockMvcRequestBuilders.post(this.baseUrl + "/wizards")
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -150,7 +152,7 @@ class WizardControllerTest {
         // when and then
         this.mockMvc
                 .perform(MockMvcRequestBuilders.get(
-                                this.baseUrl+"/wizards/" + this.wizards.get(0).getId())
+                                this.baseUrl + "/wizards/" + this.wizards.get(0).getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(Boolean.TRUE))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(StatusCode.SUCCESS))
@@ -172,7 +174,7 @@ class WizardControllerTest {
         // when and then
         this.mockMvc
                 .perform(MockMvcRequestBuilders.get(
-                                this.baseUrl+"/wizards/" + this.wizards.get(0).getId())
+                                this.baseUrl + "/wizards/" + this.wizards.get(0).getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(Boolean.FALSE))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(StatusCode.NOT_FOUND))
@@ -188,10 +190,30 @@ class WizardControllerTest {
 
         // when and then
         this.mockMvc
-                .perform(MockMvcRequestBuilders.get(this.baseUrl+"/wizards").accept(MediaType.APPLICATION_JSON))
+                .perform(MockMvcRequestBuilders.get(this.baseUrl + "/wizards").accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(Boolean.TRUE))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("All Wizards"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].id").value(1));
+    }
+
+    @Test
+    void testAssignArtifactSuccess() throws Exception {
+        // given
+        ArtifactDTO artifactDTO = new ArtifactDTO(
+                "1250808601744904191",
+                "Deluminator",
+                "A Deluminator is a device invented by Albus Dumbledore that resembles a cigarette lighter. It is used to remove or absorb (as well as return) the light from any light source to provide cover to the user.",
+                "imageUrl",
+                null);
+        String json = objectMapper.writeValueAsString(artifactDTO);
+        BDDMockito.doNothing().when(wizardService).assignArtifact(BDDMockito.anyInt(), BDDMockito.anyString());
+        // when
+        this.mockMvc
+                .perform(MockMvcRequestBuilders.put(this.baseUrl + "/wizards/1/artifacts/1250808601744904193")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(StatusCode.SUCCESS))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(Boolean.TRUE))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Artifact Assignment to Success"));
     }
 }
