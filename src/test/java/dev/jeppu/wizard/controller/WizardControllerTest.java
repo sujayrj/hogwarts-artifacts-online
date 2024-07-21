@@ -112,7 +112,8 @@ class WizardControllerTest {
         BDDMockito.willDoNothing().given(wizardService).deleteWizard(BDDMockito.anyInt());
         // when
         this.mockMvc
-                .perform(MockMvcRequestBuilders.delete(this.baseUrl+"/wizards/3").accept(MediaType.APPLICATION_JSON))
+                .perform(MockMvcRequestBuilders.delete(this.baseUrl + "/wizards/3")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(Boolean.TRUE))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Wizard Deleted"));
@@ -132,7 +133,7 @@ class WizardControllerTest {
 
         // when
         this.mockMvc
-                .perform(MockMvcRequestBuilders.post(this.baseUrl+"/wizards")
+                .perform(MockMvcRequestBuilders.post(this.baseUrl + "/wizards")
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -150,7 +151,7 @@ class WizardControllerTest {
         // when and then
         this.mockMvc
                 .perform(MockMvcRequestBuilders.get(
-                                this.baseUrl+"/wizards/" + this.wizards.get(0).getId())
+                                this.baseUrl + "/wizards/" + this.wizards.get(0).getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(Boolean.TRUE))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(StatusCode.SUCCESS))
@@ -172,7 +173,7 @@ class WizardControllerTest {
         // when and then
         this.mockMvc
                 .perform(MockMvcRequestBuilders.get(
-                                this.baseUrl+"/wizards/" + this.wizards.get(0).getId())
+                                this.baseUrl + "/wizards/" + this.wizards.get(0).getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(Boolean.FALSE))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(StatusCode.NOT_FOUND))
@@ -188,7 +189,7 @@ class WizardControllerTest {
 
         // when and then
         this.mockMvc
-                .perform(MockMvcRequestBuilders.get(this.baseUrl+"/wizards").accept(MediaType.APPLICATION_JSON))
+                .perform(MockMvcRequestBuilders.get(this.baseUrl + "/wizards").accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(Boolean.TRUE))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("All Wizards"))
