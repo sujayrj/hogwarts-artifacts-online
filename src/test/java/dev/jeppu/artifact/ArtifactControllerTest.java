@@ -115,7 +115,7 @@ class ArtifactControllerTest {
 
         // then
         this.mockMvc
-                .perform(MockMvcRequestBuilders.delete(baseUrl+"/artifacts/1250808601744904196")
+                .perform(MockMvcRequestBuilders.delete(baseUrl + "/artifacts/1250808601744904196")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Artifact Deleted"))
@@ -137,7 +137,7 @@ class ArtifactControllerTest {
                 .willThrow(new ObjectNotFoundException("Artifact", "1250808601744904191"));
 
         this.mockMvc
-                .perform(MockMvcRequestBuilders.put(baseUrl+"/artifacts/1250808601744904191")
+                .perform(MockMvcRequestBuilders.put(baseUrl + "/artifacts/1250808601744904191")
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -168,7 +168,7 @@ class ArtifactControllerTest {
         BDDMockito.given(artifactService.updateArtifact(BDDMockito.anyString(), BDDMockito.any(Artifact.class)))
                 .willReturn(artifact);
 
-        mockMvc.perform(MockMvcRequestBuilders.put(baseUrl+"/artifacts/1250808601744904191")
+        mockMvc.perform(MockMvcRequestBuilders.put(baseUrl + "/artifacts/1250808601744904191")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON))
@@ -206,7 +206,7 @@ class ArtifactControllerTest {
 
         // when & then
         this.mockMvc
-                .perform(MockMvcRequestBuilders.post(baseUrl+"/artifacts")
+                .perform(MockMvcRequestBuilders.post(baseUrl + "/artifacts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON))
@@ -225,7 +225,7 @@ class ArtifactControllerTest {
         BDDMockito.given(artifactService.findAllArtifacts()).willReturn(artifacts);
 
         // When & Then
-        mockMvc.perform(MockMvcRequestBuilders.get(baseUrl+"/artifacts").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + "/artifacts").accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(Boolean.TRUE))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Find All Success"))
@@ -244,7 +244,7 @@ class ArtifactControllerTest {
         // Given
         BDDMockito.given(artifactService.findById("1250808601744904196")).willReturn(artifacts.get(5));
         // When and Then
-        mockMvc.perform(MockMvcRequestBuilders.get(baseUrl+"/artifacts/1250808601744904196")
+        mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + "/artifacts/1250808601744904196")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(Boolean.TRUE))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(StatusCode.SUCCESS))
@@ -265,7 +265,7 @@ class ArtifactControllerTest {
         BDDMockito.given(artifactService.findById("1250808601744904196"))
                 .willThrow(new ObjectNotFoundException("Artifact", "1250808601744904196"));
         // When and Then
-        mockMvc.perform(MockMvcRequestBuilders.get(baseUrl+"/artifacts/1250808601744904196")
+        mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + "/artifacts/1250808601744904196")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(Boolean.FALSE))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(StatusCode.NOT_FOUND))

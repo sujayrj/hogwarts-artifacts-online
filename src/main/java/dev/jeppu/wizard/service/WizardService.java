@@ -1,5 +1,7 @@
 package dev.jeppu.wizard.service;
 
+import dev.jeppu.artifact.Artifact;
+import dev.jeppu.artifact.ArtifactRepository;
 import dev.jeppu.system.exception.ObjectNotFoundException;
 import dev.jeppu.wizard.Wizard;
 import dev.jeppu.wizard.WizardRepository;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 public class WizardService {
 
     private final WizardRepository wizardRepository;
+    private final ArtifactRepository artifactRepository;
 
     public List<Wizard> getAllWizards() {
         return wizardRepository.findAll();
@@ -44,5 +47,19 @@ public class WizardService {
                 .orElseThrow(() -> new ObjectNotFoundException("Wizard", String.valueOf(wizardId)));
         wizard.removeAllArtifacts();
         this.wizardRepository.deleteById(wizardId);
+    }
+
+    public void assignArtifact(Integer wizardId, String artifactId) {
+        Artifact artifact = artifactRepository
+                .findById(artifactId)
+                .orElseThrow(() -> new ObjectNotFoundException("Artifact", artifactId));
+        Wizard wizard = this.wizardRepository
+                .findById(wizardId)
+                .orElseThrow(() -> new ObjectNotFoundException("Wizard", String.valueOf(wizardId)));
+        if (artifact.getOwner() != null) {
+            artifact.getOwner().removeArtifact(artifact);
+        }
+        wizard.addArtifact(artifact);
+        wizardRepository.save(wizard);
     }
 }
