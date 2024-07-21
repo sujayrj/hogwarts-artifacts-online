@@ -2,6 +2,7 @@ package dev.jeppu.artifact;
 
 import dev.jeppu.artifact.dto.ArtifactDTO;
 import dev.jeppu.artifact.util.IdWorker;
+import dev.jeppu.system.exception.ObjectNotFoundException;
 import dev.jeppu.wizard.Wizard;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,19 +56,19 @@ class ArtifactServiceTest {
     void testDeleteArtifactByIdWhenArtifactNotFound() {
         // Given
         BDDMockito.given(artifactRepository.findById("1250808601744904191"))
-                .willThrow(new ArtifactNotFoundException("1250808601744904191"));
-        // BDDMockito.willDoNothing().given(artifactRepository).deleteById("1250808601744904191");
+                .willThrow(new ObjectNotFoundException("Artifact", "1250808601744904191"));
+        // BDDMockito.willDoNothing().given(this.artifactRepository).deleteById("1250808601744904191");
 
         // then
         // 1st option - using Assertions from Junit
-        // org.junit.jupiter.api.Assertions.assertThrows(ArtifactNotFoundException.class, () ->
+        // org.junit.jupiter.api.Assertions.assertThrows(ObjectNotFoundException.class, () ->
         // artifactService.deleteArtifactById("1250808601744904191"));
 
         // 2nd option - using Assertions from AssertJ, you can verify the message as well in this case
         Throwable catchThrowable =
                 Assertions.catchThrowable(() -> artifactService.deleteArtifactById("1250808601744904191"));
-        Assertions.assertThat(catchThrowable).isInstanceOf(ArtifactNotFoundException.class);
-        Assertions.assertThat(catchThrowable).hasMessage("Could not find Artifact with Id 1250808601744904191");
+        Assertions.assertThat(catchThrowable).isInstanceOf(ObjectNotFoundException.class);
+        Assertions.assertThat(catchThrowable).hasMessage("Could not find Artifact with Id : 1250808601744904191");
     }
 
     @Test
@@ -80,33 +81,35 @@ class ArtifactServiceTest {
                 "A Deluminator is a device invented by Albus Dumbledore that resembles a cigarette lighter. It is used to remove or absorb (as well as return) the light from any light source to provide cover to the user.");
         artifact.setImageUrl("imageUrl");
 
-        BDDMockito.given(artifactRepository.findById(BDDMockito.anyString())).willReturn(Optional.of(artifact));
-        BDDMockito.willDoNothing().given(artifactRepository).deleteById(artifact.getId());
+        BDDMockito.given(this.artifactRepository.findById(BDDMockito.anyString()))
+                .willReturn(Optional.of(artifact));
+        BDDMockito.willDoNothing().given(this.artifactRepository).deleteById(artifact.getId());
 
         // When
         artifactService.deleteArtifactById(artifact.getId());
 
         // Then
-        BDDMockito.verify(artifactRepository, BDDMockito.times(1)).findById("1250808601744904191");
-        BDDMockito.verify(artifactRepository, BDDMockito.times(1)).deleteById("1250808601744904191");
+        BDDMockito.verify(this.artifactRepository, BDDMockito.times(1)).findById("1250808601744904191");
+        BDDMockito.verify(this.artifactRepository, BDDMockito.times(1)).deleteById("1250808601744904191");
     }
 
     @Test
     void testUpdatedArtifactWhenArtifactIdNotFound() {
         Artifact artifact = new Artifact(
-                "1250808601744904191",
+                null,
                 "Deluminator",
                 "A Deluminator is a device invented by Albus Dumbledore that resembles a cigarette lighter. It is used to remove or absorb (as well as return) the light from any light source to provide cover to the user.",
                 "imageUrl",
                 null);
 
-        BDDMockito.given(artifactRepository.findById(BDDMockito.anyString())).willReturn(Optional.empty());
+        BDDMockito.given(this.artifactRepository.findById(BDDMockito.anyString()))
+                .willReturn(Optional.empty());
 
         Throwable throwable =
                 Assertions.catchThrowable(() -> artifactService.updateArtifact("1250808601744904191", artifact));
-        Assertions.assertThat(throwable).isInstanceOf(ArtifactNotFoundException.class);
+        Assertions.assertThat(throwable).isInstanceOf(ObjectNotFoundException.class);
 
-        BDDMockito.verify(artifactRepository, BDDMockito.times(1)).findById(BDDMockito.anyString());
+        BDDMockito.verify(this.artifactRepository, BDDMockito.times(1)).findById(BDDMockito.anyString());
     }
 
     @Test
@@ -131,8 +134,9 @@ class ArtifactServiceTest {
                 "A Deluminator is a device invented by Albus Dumbledore that resembles a cigarette lighter. It is used to remove or absorb (as well as return) the light from any light source to provide cover to the user.");
         savedArtifact.setImageUrl("imageUrl");
 
-        BDDMockito.given(artifactRepository.findById(BDDMockito.anyString())).willReturn(Optional.of(artifact));
-        BDDMockito.given(artifactRepository.save(BDDMockito.any(Artifact.class)))
+        BDDMockito.given(this.artifactRepository.findById(BDDMockito.anyString()))
+                .willReturn(Optional.of(artifact));
+        BDDMockito.given(this.artifactRepository.save(BDDMockito.any(Artifact.class)))
                 .willReturn(savedArtifact);
 
         Artifact updatedArtifact = artifactService.updateArtifact("1250808601744904191", artifact);
@@ -145,8 +149,8 @@ class ArtifactServiceTest {
                         "A Deluminator is a device invented by Albus Dumbledore that resembles a cigarette lighter. It is used to remove or absorb (as well as return) the light from any light source to provide cover to the user.");
         Assertions.assertThat(updatedArtifact.getImageUrl()).isEqualTo("imageUrl");
 
-        BDDMockito.verify(artifactRepository, BDDMockito.times(1)).findById(BDDMockito.anyString());
-        BDDMockito.verify(artifactRepository, BDDMockito.times(1)).save(BDDMockito.any(Artifact.class));
+        BDDMockito.verify(this.artifactRepository, BDDMockito.times(1)).findById(BDDMockito.anyString());
+        BDDMockito.verify(this.artifactRepository, BDDMockito.times(1)).save(BDDMockito.any(Artifact.class));
     }
 
     @Test
@@ -159,7 +163,7 @@ class ArtifactServiceTest {
         newArtifact.setImageUrl("imageUrl");
 
         BDDMockito.given(idWorker.nextId()).willReturn(123456L);
-        BDDMockito.given(artifactRepository.save(BDDMockito.any(Artifact.class)))
+        BDDMockito.given(this.artifactRepository.save(BDDMockito.any(Artifact.class)))
                 .willReturn(newArtifact);
 
         // When
@@ -173,20 +177,20 @@ class ArtifactServiceTest {
                         "A Deluminator is a device invented by Albus Dumbledore that resembles a cigarette lighter. It is used to remove or absorb (as well as return) the light from any light source to provide cover to the user.");
         Assertions.assertThat(savedArtifact.getImageUrl()).isEqualTo("imageUrl");
 
-        BDDMockito.verify(artifactRepository, Mockito.times(1)).save(Mockito.any(Artifact.class));
+        BDDMockito.verify(this.artifactRepository, Mockito.times(1)).save(Mockito.any(Artifact.class));
     }
 
     @Test
     void findAllArtifacts() {
         // Given
-        BDDMockito.given(artifactRepository.findAll()).willReturn(this.artifacts);
+        BDDMockito.given(this.artifactRepository.findAll()).willReturn(this.artifacts);
 
         // When
         List<Artifact> allArtifacts = artifactService.findAllArtifacts();
 
         // Assert
         Assertions.assertThat(allArtifacts.size()).isEqualTo(2);
-        BDDMockito.verify(artifactRepository, Mockito.times(1)).findAll();
+        BDDMockito.verify(this.artifactRepository, Mockito.times(1)).findAll();
     }
 
     @Test
@@ -200,7 +204,7 @@ class ArtifactServiceTest {
                 "image1",
                 wizard);
         wizard.setArtifacts(Arrays.asList(artifact));
-        BDDMockito.given(artifactRepository.findById(artifact.getId())).willReturn(Optional.of(artifact));
+        BDDMockito.given(this.artifactRepository.findById(artifact.getId())).willReturn(Optional.of(artifact));
 
         // Then
         Artifact actualArtifact = artifactService.findById(artifact.getId());
@@ -220,12 +224,13 @@ class ArtifactServiceTest {
     @Test
     void testFindByArtifactNotFound() {
         // Given
-        BDDMockito.given(artifactRepository.findById(BDDMockito.anyString())).willReturn(Optional.empty());
+        BDDMockito.given(this.artifactRepository.findById(BDDMockito.anyString()))
+                .willReturn(Optional.empty());
         // Then
         Throwable actualThrowable = Assertions.catchThrowable(() -> artifactService.findById("1250808601744904192"));
         // Assert
-        Assertions.assertThat(actualThrowable).isInstanceOf(ArtifactNotFoundException.class);
+        Assertions.assertThat(actualThrowable).isInstanceOf(ObjectNotFoundException.class);
         Assertions.assertThat(actualThrowable.getMessage())
-                .isEqualTo("Could not find Artifact with Id 1250808601744904192");
+                .isEqualTo("Could not find Artifact with Id : 1250808601744904192");
     }
 }

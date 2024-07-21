@@ -1,6 +1,5 @@
 package dev.jeppu.system.exception;
 
-import dev.jeppu.artifact.ArtifactNotFoundException;
 import dev.jeppu.system.Result;
 import dev.jeppu.system.StatusCode;
 import java.util.Map;
@@ -14,9 +13,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ExceptionHandlerAdvice {
-    @ExceptionHandler(ArtifactNotFoundException.class)
+    @ExceptionHandler({ObjectNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    Result handleArtifactNotFoundException(ArtifactNotFoundException exception) {
+    Result handleArtifactNotFoundException(ObjectNotFoundException exception) {
         return new Result(Boolean.FALSE, StatusCode.NOT_FOUND, exception.getMessage());
     }
 
